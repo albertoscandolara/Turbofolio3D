@@ -1,0 +1,29 @@
+@import 'base/global';
+@import 'base/fonts';
+@import 'base/states';
+@import 'base/utilities';
+
+
+/* Import Base */
+@import "abstracts/functions";
+@import "abstracts/mixins";
+@import "abstracts/variables";
+
+@import "base/global";
+@import "base/reset";
+@import "base/typography";
+
+/* Import Components */
+@import "components/app";
+@import "components/loader";
+
+/* Import Vendor */
+
+//////////////////////////////////
+//   Media queries breakpoints  //
+//////////////////////////////////
+// 320px — 480px: Mobile devices.
+// 481px — 768px: iPads, Tablets.
+// 769px — 1024px: Small screens, laptops.
+// 1025px — 1200px: Desktops, large screens.
+// 1201px and more — Extra large screens, TV.

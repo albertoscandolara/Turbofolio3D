@@ -1,0 +1,138 @@
+.loader-background {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $semi-transparent-black;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+  position: absolute;
+  contain: layout  inline-size;
+
+  .loader-area {
+    display: flex;
+    flex-direction: column;
+    min-width: 3rem;
+    max-width: 50rem;
+    width: 80%;
+
+    .default-loader-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    /*   Progress bar   */
+    .progress-bar-container{
+      .progress-bar {
+        display: flex;
+        align-items: center;
+        position: relative;
+        background: #555;
+        border-radius: 9999px;
+        padding: 0.5rem;
+        box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+      }
+      .progress-bar > span {
+        min-height: 0.7rem;
+        border-radius: 9999px;
+        background-color: rgb(43, 194, 83);
+        background-image: linear-gradient(
+          center bottom,
+          rgb(43, 194, 83) 37%,
+          rgb(84, 240, 84) 69%
+        );
+        box-shadow: inset 0 2px 9px rgba(255, 255, 255, 0.3),
+          inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+      .progress-bar > span:after,
+      .animate > span > span {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-image: linear-gradient(
+          -45deg,
+          rgba(255, 255, 255, 0.2) 25%,
+          transparent 25%,
+          transparent 50%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.2) 75%,
+          transparent 75%,
+          transparent
+        );
+        z-index: 1;
+        background-size: 50px 50px;
+        animation: move 2s linear infinite;
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+  
+      .animate > span:after {
+        display: none;
+      }
+    }
+    
+
+  }
+}
+
+.moving-character {
+  position: absolute;
+  max-width: 5%;
+  width: 10%;
+  height: auto;
+}
+
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* Container rule */
+@container (min-width:700px){
+}
+
+@container (min-width:481px){
+  
+}
+
+@container (min-width:769px){
+  .loader-area{
+    width: 70%;
+  }
+}
+
+@container (min-width:1025px){
+  .loader-area{
+    width: 50%;
+  }
+}
+
+@container (min-width:1201px){
+  
+}
+/////////////////////////////////
+//   Moving character loader   //
+/////////////////////////////////
+
+////////////////////////////
+//   Progress bar loader  //
+////////////////////////////
+
+////////////////////////
+//   Spinner loader   //
+////////////////////////
+
+//////////////////////////
+//   Moving character   //
+//////////////////////////

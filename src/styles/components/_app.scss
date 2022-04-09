@@ -1,0 +1,15 @@
+.app-container{
+    height: 100%;
+    width: 100%;
+    position: relative;
+
+    &.bordered{
+        resize: both;
+        overflow: hidden;
+        height: 99%;
+        min-height: 200px;
+        width: 99%;
+        min-width: 200px;
+        border: 1px solid $white;
+    }
+}
