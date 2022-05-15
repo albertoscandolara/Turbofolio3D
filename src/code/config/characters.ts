@@ -16,5 +16,17 @@ export const characters: Array<Character> = [
   //   new THREE.Vector3(0, 0, 0),
   //   new THREE.Vector3(0, 90, 0)
   // )
-  new Character(0, `Main character`, `Main character`, 700, -1, 0.1, true, new THREE.Vector3(0, 0, 0), Math.PI / 2)
+  new Character(
+    0,
+    `Main character`,
+    `Main character`,
+    700,
+    -1,
+    false,
+    null,
+    0.1,
+    true,
+    new THREE.Vector3(0, 0, 0),
+    Math.PI / 2
+  )
 ];

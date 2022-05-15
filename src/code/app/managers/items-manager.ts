@@ -30,7 +30,7 @@ export class ItemsManager {
     this._items = items;
 
     this._assetsManager = new AssetsManager();
-    this._assets = this._assetsManager.getAssetsWithCategory(AssetCategory.Building);
+    this._assets = this._assetsManager.getAssetsWithCategory(AssetCategory.Item);
 
     this.setAssetIds();
 
@@ -55,11 +55,53 @@ export class ItemsManager {
   }
 
   /**
+   * Check if there are configured items
+   */
+  private checkForNoItems(): void {
+    if (!this._items.length) {
+      this._logger.error(`No items configurations found.`);
+    }
+  }
+
+  /**
    * Associate an asset id to items that don't have one
    */
   private setAssetIds(): void {
     this._items
       .filter((item) => item._assetId === -1)
       .forEach((item) => (item._assetId = Math.floor(Math.random() * (this._assets.length + 1))));
+  }
+
+  /**
+   * Get the item with given id
+   * @param id id of the item to find
+   * @returns item with id configuration
+   */
+  public getItemWithId(id: number): Item {
+    this.checkForNoItems();
+
+    let item!: Item;
+
+    const items: Array<Item> = this._items.filter((item) => item.id === id);
+
+    if (items.length === 0) {
+      this._logger.error(`No items with id '${id}' found.`);
+    } else {
+      if (items.length > 1) {
+        this._logger.warn(`More items with id '${id}' found. Got the first one.`);
+      }
+      item = items[0];
+    }
+
+    return item;
+  }
+
+  /**
+   * Get interaction checkpoint item
+   * @returns interaction checkpoint item
+   */
+  public getInteractionCheckpointItem(): Item {
+    const interactionCheckpointId: number = 0;
+    return this.getItemWithId(interactionCheckpointId);
   }
 }

@@ -21,6 +21,7 @@ import { Environment } from '../../../models/3D/environment/environment';
 
 import { Controller } from '../controllers/controller';
 import { CubeTextureLoader } from '../loaders/cubeTextureLoader';
+import { Item } from '~/models/3D/environment/items/item';
 
 export class World {
   declare _app3D: App3D;
@@ -45,6 +46,7 @@ export class World {
 
   declare _controller: Controller;
   declare _mainCharacter: Character;
+  declare _interactionCheckpoint: Item;
   declare _environment: Environment;
 
   /**
@@ -87,6 +89,8 @@ export class World {
         _description,
         _height,
         _assetId,
+        false,
+        null,
         _speed,
         _canMove,
         _initialPosition,
@@ -95,6 +99,13 @@ export class World {
       this._mainCharacter.setAppParams(this._app3D);
 
       this._mainCharacter.loadAsset();
+    }
+
+    {
+      // Set interaction checkpoint
+      this._interactionCheckpoint = this._itemsManager.getInteractionCheckpointItem();
+      this._interactionCheckpoint.setAppParams(this._app3D);
+      this._interactionCheckpoint.loadAsset();
     }
 
     {
@@ -117,13 +128,15 @@ export class World {
    */
   public setModel(assetId: number) {
     if (!this._mainCharacter._asset && this._mainCharacter._assetId === assetId) {
-      // This will happen only once at initialization
       this._mainCharacter.setAsset(assetId);
 
       this._controller = new Controller(this._app3D);
       (this._mainCharacter as MainCharacter).setController(this._controller);
 
       this._environment.setMainCharacter(this._mainCharacter as MainCharacter);
+    } else if (!this._interactionCheckpoint._asset && this._interactionCheckpoint._assetId === assetId) {
+      this._interactionCheckpoint.setAsset(assetId);
+      this._scene.remove(this._interactionCheckpoint._asset);
     }
 
     this._environment.setModel(assetId);

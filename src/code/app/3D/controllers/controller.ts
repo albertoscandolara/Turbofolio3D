@@ -84,13 +84,6 @@ export class Controller {
     this._logger.log(`${this.constructor.name} class instantiated:`, this);
   }
 
-  /**
-   * Set navigation floor
-   */
-  // public setFloor(floor: Floor): void {
-  //   this._floor = floor;
-  // }
-
   private initOnscreenController(): void {}
 
   /**

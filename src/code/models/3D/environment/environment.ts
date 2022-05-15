@@ -29,6 +29,7 @@ export class Environment implements IEnvironment {
   declare _backgroundCubeTexturesManager: BackgroundCubeTexturesManager;
 
   declare _mainCharacter: MainCharacter;
+  declare _interactionCheckpoint: Item;
   declare _backgroundCubeTexture: BackgroundCubeTexture;
   declare _floor: Floor;
   declare _characters: Array<Character>;
@@ -157,9 +158,13 @@ export class Environment implements IEnvironment {
       .forEach((model) => {
         model.setAsset(assetId);
 
-        // if (model instanceof Floor) {
-        //   (this._mainCharacter as MainCharacter)._controller.setFloor(this._floor);
-        // }
+        // Set checkpoint for interactable models
+        if (model._isInteractable) {
+          (model._checkpoint as Item).setAppParams(this._app3D);
+
+          const checkpointAssetId: number = this._app3D._itemsManager.getInteractionCheckpointItem()._assetId;
+          (model._checkpoint as Item).setAsset(checkpointAssetId);
+        }
       });
   }
 

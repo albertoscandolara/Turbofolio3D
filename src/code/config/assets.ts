@@ -24,5 +24,6 @@ export const assets: Array<Asset> = [
     AssetType.DRACO,
     AssetCategory.Building
   ),
-  new Asset(2, 'Dust', 'Dust', `${floorsFolder}/dust/scene.gltf`, AssetType.DRACO, AssetCategory.Floor)
+  new Asset(2, 'Dust', 'Dust', `${floorsFolder}/dust/scene.gltf`, AssetType.DRACO, AssetCategory.Floor),
+  new Asset(3, 'Checkpoint', 'Checkpoint', `${itemsFolder}/checkpoint/scene.gltf`, AssetType.DRACO, AssetCategory.Item)
 ];

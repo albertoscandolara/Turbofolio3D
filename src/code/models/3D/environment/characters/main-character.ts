@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { App3D } from '~/app/3D/app-3D';
 import { Controller } from '../../../../app/3D/controllers/controller';
 import { Logger } from '../../../../app/logger';
+import { Item } from '../items/item';
 import { Character } from './character';
 
 export class MainCharacter extends Character {
@@ -17,12 +17,26 @@ export class MainCharacter extends Character {
     description: string,
     height: number,
     assetId: number,
+    isInteractable: boolean,
+    checkpoint: Item | null,
     speed: number,
     canMove: boolean,
     initialPosition: THREE.Vector3 = new THREE.Vector3(),
     initialYAngleRotation: number = 0
   ) {
-    super(id, name, description, height, assetId, speed, canMove, initialPosition, initialYAngleRotation);
+    super(
+      id,
+      name,
+      description,
+      height,
+      assetId,
+      isInteractable,
+      checkpoint,
+      speed,
+      canMove,
+      initialPosition,
+      initialYAngleRotation
+    );
     this._logger = new Logger();
 
     this._logger.log(`${this.constructor.name} class instantiated:`, this);

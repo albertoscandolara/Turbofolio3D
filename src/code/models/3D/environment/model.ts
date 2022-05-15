@@ -7,6 +7,7 @@ import { centimeter, meter } from './../../../app/3D/utils/units';
 import { App3D } from '../../../app/3D/app-3D';
 import { Camera } from '../../../app/3D/camera';
 import { yAxis, zAxis } from '../../../config/axes';
+import { Item } from './items/item';
 
 const length = require('convert-units');
 const SkeletonUtils = require('three/examples/jsm/utils/SkeletonUtils');
@@ -22,7 +23,8 @@ export class Model {
   declare _asset: THREE.Group;
   declare _initialPosition: THREE.Vector3;
   declare _initialYAngleRotation: number;
-  declare _camera: Camera;
+  declare _isInteractable: boolean;
+  declare _checkpoint: Item | null;
 
   declare _assetsManager: AssetsManager;
 
@@ -30,6 +32,7 @@ export class Model {
 
   // App 3D params
   declare _scene: THREE.Scene;
+  declare _camera: Camera;
   declare _isDebug: boolean;
 
   /**
@@ -41,6 +44,8 @@ export class Model {
     description: string,
     height: number,
     assetId: number = -1,
+    isInteractable: boolean,
+    checkpoint: Item | null,
     initialPosition: THREE.Vector3 = new THREE.Vector3(),
     initialYAngleRotation: number = 0
   ) {
@@ -51,6 +56,8 @@ export class Model {
     this._description = description;
     this._height = height;
     this._assetId = assetId;
+    this._isInteractable = isInteractable;
+    this._checkpoint = this._isInteractable ? checkpoint : null;
     this._initialPosition = initialPosition;
     this._initialYAngleRotation = initialYAngleRotation;
     this._camera;
@@ -87,6 +94,7 @@ export class Model {
     this.setScale();
     this.setInitialPosition(this._initialPosition);
     this.setInitialYRotation(this._initialYAngleRotation);
+    this.setInteractionCheckpoint();
 
     this.setDebugHelperTools();
 
@@ -131,6 +139,11 @@ export class Model {
     this._logger.log(
       `${this.constructor.name} - Model named '${this._name}' with id '${this._id}' scaled by ${scaleFactor}. Height went from ${originalMaxModelHeight} to ${newMaxModelHeight} units.`
     );
+  }
+
+  private setInteractionCheckpoint() {
+    if (!this._isInteractable || this._checkpoint) return;
+    this._checkpoint;
   }
 
   /**
