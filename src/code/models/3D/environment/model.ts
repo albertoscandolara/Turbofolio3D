@@ -19,6 +19,7 @@ export class Model {
   declare _name: string;
   declare _description: string;
   declare _height: number;
+  declare _boundingBox: THREE.Box3;
   declare _assetId: number;
   declare _asset: THREE.Group;
   declare _initialPosition: THREE.Vector3;
@@ -94,7 +95,7 @@ export class Model {
     this.setScale();
     this.setInitialPosition(this._initialPosition);
     this.setInitialYRotation(this._initialYAngleRotation);
-    this.setInteractionCheckpoint();
+    this.setBoundingBox();
 
     this.setDebugHelperTools();
 
@@ -141,11 +142,6 @@ export class Model {
     );
   }
 
-  private setInteractionCheckpoint() {
-    if (!this._isInteractable || this._checkpoint) return;
-    this._checkpoint;
-  }
-
   /**
    * Set initial position
    */
@@ -161,17 +157,25 @@ export class Model {
   }
 
   /**
+   * Set bounding box
+   */
+  public setBoundingBox(): void {
+    const newBoundingBox: THREE.Box3 = new THREE.Box3().setFromObject(this._asset);
+    this._boundingBox = newBoundingBox;
+  }
+
+  /**
    * Set helper tools to show in debug mode
    */
   private setDebugHelperTools(): void {
     if (!this._isDebug) return;
 
-    this.setBoundingBox();
     this.setModelAxesHelper();
+    this.setBoundingBoxHelper();
   }
 
   /**
-   * Set bounding box
+   * Set bounding axes helper
    */
   private setModelAxesHelper(): void {
     const boundingBox: THREE.Box3 = new THREE.Box3().setFromObject(this._asset);
@@ -181,9 +185,9 @@ export class Model {
   }
 
   /**
-   * Set bounding box
+   * Set bounding box debug helper
    */
-  private setBoundingBox(): void {
+  private setBoundingBoxHelper(): void {
     const box = new THREE.BoxHelper(this._asset, 0xffff00);
     this._asset.attach(box);
   }

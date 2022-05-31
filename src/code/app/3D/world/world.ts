@@ -166,6 +166,8 @@ export class World {
    */
   public update(): void {
     (this._mainCharacter as MainCharacter)._controller?.update();
+
+    this._environment.update();
   }
 
   /**

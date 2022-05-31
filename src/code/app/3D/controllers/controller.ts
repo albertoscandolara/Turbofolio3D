@@ -1,9 +1,7 @@
 import * as THREE from 'three';
 import { Logger } from '../../../app/logger';
 import { MainCharacter } from '../../../models/3D/environment/characters/main-character';
-import { Floor } from '../../../models/3D/environment/floors/floor';
 import { App3D } from '../app-3D';
-import { Camera } from '../camera';
 import { Time } from '../utils/time';
 
 import { keydown, keyup, mousedown, mouseup } from '../../../config/events';
@@ -13,8 +11,6 @@ import {
   leftKeyboardKeys,
   rightKeyboardKeys
 } from '../../../config/controller';
-
-import { zAxis } from '../../../config/axes';
 
 export class Move {
   declare forward: boolean;
@@ -198,6 +194,8 @@ export class Controller {
         ? -this._mainCharacterTraslationDistance
         : this._mainCharacterTraslationDistance;
       this._mainCharacter._asset.translateZ(distance);
+
+      this._mainCharacter.setBoundingBox();
     }
   }
 }

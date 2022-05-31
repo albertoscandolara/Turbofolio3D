@@ -7,8 +7,6 @@ import { Item } from './items/item';
 import { Light } from '../light';
 import { Floor } from './floors/floor';
 import { App3D } from '../../../app/3D/app-3D';
-import { DracoLoader } from '../../../app/3D/loaders/dracoLoader';
-import { CubeTextureLoader } from '../../../app/3D/loaders/cubeTextureLoader';
 import { BackgroundCubeTexture } from './backgrounds/background';
 import { BackgroundCubeTexturesManager } from '~/app/managers/background-cube-textures';
 
@@ -195,5 +193,19 @@ export class Environment implements IEnvironment {
    */
   public setBackgroundCubeTexture(): void {
     this._scene.background = this._backgroundCubeTexture._cubeTexture;
+  }
+
+  /**
+   * Update all elements in the scene
+   */
+  public update(): void {
+    [...this._characters, ...this._buildings, ...this._items]
+      .filter((model) => model._isInteractable && model._checkpoint)
+      .forEach((model) => {
+        const checkpoint: Item = model._checkpoint as Item;
+        if (checkpoint._boundingBox?.intersectsBox(this._mainCharacter._boundingBox)) {
+          console.error(`Main character colliding with checkpoint`, model);
+        }
+      });
   }
 }
