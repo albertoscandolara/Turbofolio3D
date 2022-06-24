@@ -19,10 +19,12 @@ export class MainCharacter extends Character {
     assetId: number,
     isInteractable: boolean,
     checkpoint: Item | null,
+    goToEnvironment: number | null,
+    goToHTML: number | null,
     speed: number,
     canMove: boolean,
     initialPosition: THREE.Vector3 = new THREE.Vector3(),
-    initialYAngleRotation: number = 0
+    rotation: THREE.Euler = new THREE.Euler()
   ) {
     super(
       id,
@@ -32,10 +34,12 @@ export class MainCharacter extends Character {
       assetId,
       isInteractable,
       checkpoint,
+      goToEnvironment,
+      goToHTML,
       speed,
       canMove,
       initialPosition,
-      initialYAngleRotation
+      rotation
     );
     this._logger = new Logger();
 

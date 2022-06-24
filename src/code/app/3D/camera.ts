@@ -7,6 +7,8 @@ import { Sizes } from './utils/sizes';
 
 import { fov, near, far } from '../../config/app-3D';
 import { GUI } from './dat-gui';
+import { Model } from '../../models/3D/environment/model';
+import { yAxis, zAxis } from '../../config/axes';
 
 export class Camera {
   declare _logger: Logger;
@@ -42,6 +44,25 @@ export class Camera {
    */
   private setInstance(): void {
     this._instance = new THREE.PerspectiveCamera(fov, this._sizes._width / this._sizes._height, near, far);
+  }
+
+  /**
+   * Set camera ideal position
+   * @param model asset according to
+   */
+  public setCameraPosition(model: Model): void {
+    this._instance.position.copy(model._asset.children[0].position);
+
+    let cameraOffset: THREE.Vector3 = new THREE.Vector3();
+
+    const k: number = 4;
+    const assetHeight: number = model._height;
+
+    cameraOffset.y = assetHeight * k;
+    cameraOffset.z = assetHeight * k * 3;
+
+    this._instance.translateOnAxis(yAxis, cameraOffset.y);
+    this._instance.translateOnAxis(zAxis, cameraOffset.z);
   }
 
   /**

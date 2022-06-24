@@ -4,6 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { Logger } from '../../../app/logger';
 import { Asset, AssetLoadingStatus } from '../../../models/3D/environment/asset';
 import { assetLoadedEventEmitter } from '../../../app/event-emitter/events';
+import * as THREE from 'three';
 
 let instance!: DracoLoader;
 
@@ -25,7 +26,7 @@ export class DracoLoader {
 
     this._logger = new Logger();
 
-    this._dracoDecoderPath = './js/libs/draco/';
+    this._dracoDecoderPath = './src/js/libs/draco/';
     this.setLoader();
 
     this._logger.log(`${this.constructor.name} class instantiated:`, this);
@@ -48,12 +49,19 @@ export class DracoLoader {
   public loadAsset(asset: Asset): void {
     asset._loadingStatus = AssetLoadingStatus.Loading;
     this._loader.load(asset._url, (gltf) => {
-      asset._asset = gltf.scene;
+      const object3D: THREE.Object3D = new THREE.Object3D();
+      object3D.add(gltf.scene);
+      asset._asset = object3D;
+
       asset._asset.traverse(function (object) {
         object.frustumCulled = false;
         // object.castShadow = true;
         // object.receiveShadow = true;
       });
+
+      asset.setOffsetScale();
+      asset.setOffsetRotation();
+      asset.setOffsetPosition();
 
       asset._loadingStatus = AssetLoadingStatus.Loaded;
 

@@ -15,13 +15,13 @@ import { BuildingsManager } from '../../../app/managers/buildings-manager';
 import { ItemsManager } from '../../../app/managers/items-manager';
 
 import { DracoLoader } from '../loaders/dracoLoader';
-import { Character } from '../../../models/3D/environment/characters/character';
-import { MainCharacter } from '../../../models/3D/environment/characters/main-character';
 import { Environment } from '../../../models/3D/environment/environment';
+import { Model } from '../../../models/3D/environment/model';
+import { MainCharacter } from '../../../models/3D/environment/characters/main-character';
+import { Character } from '../../../models/3D/environment/characters/character';
+import { Item } from '../../../models/3D/environment/items/item';
 
 import { Controller } from '../controllers/controller';
-import { CubeTextureLoader } from '../loaders/cubeTextureLoader';
-import { Item } from '~/models/3D/environment/items/item';
 
 export class World {
   declare _app3D: App3D;
@@ -44,6 +44,7 @@ export class World {
 
   declare _loader: DracoLoader;
 
+  declare _worldQuaternion: THREE.Quaternion;
   declare _controller: Controller;
   declare _mainCharacter: Character;
   declare _interactionCheckpoint: Item;
@@ -70,6 +71,15 @@ export class World {
 
     this._loader = this._app3D._loader;
 
+    this._worldQuaternion = new THREE.Quaternion();
+
+    {
+      // Set interaction checkpoint
+      this._interactionCheckpoint = this._itemsManager.getInteractionCheckpointItem();
+      this._interactionCheckpoint.setAppParams(this._app3D);
+      this._interactionCheckpoint.loadAsset();
+    }
+
     {
       // Set main character
       const {
@@ -83,6 +93,7 @@ export class World {
         _initialPosition,
         _initialSteer
       }: any = this._charactersManager.getMainCharacter();
+
       this._mainCharacter = new MainCharacter(
         _id,
         _name,
@@ -90,6 +101,8 @@ export class World {
         _height,
         _assetId,
         false,
+        null,
+        null,
         null,
         _speed,
         _canMove,
@@ -99,13 +112,6 @@ export class World {
       this._mainCharacter.setAppParams(this._app3D);
 
       this._mainCharacter.loadAsset();
-    }
-
-    {
-      // Set interaction checkpoint
-      this._interactionCheckpoint = this._itemsManager.getInteractionCheckpointItem();
-      this._interactionCheckpoint.setAppParams(this._app3D);
-      this._interactionCheckpoint.loadAsset();
     }
 
     {
@@ -183,5 +189,16 @@ export class World {
 
     this._environment.loadBackgroundCubeTexture();
     this._environment.loadAssets();
+  }
+
+  public requestInteraction(model: Model): void {
+    if (model._goToEnvironment) {
+      this._environment._mainCharacterStartingPosition = this._mainCharacter._asset.position;
+      this._environment.disposeEnvironment();
+      this.setEnvironment(model._goToEnvironment);
+    } else if (model._goToHTML) {
+    } else {
+    }
+    //this._environment.requestInteraction();
   }
 }

@@ -4,6 +4,7 @@ import { App } from '../app';
 import {
   assetLoadedEventEmitter,
   cubeTextureLoadedEventEmitter,
+  requestInteractionEventEmitter,
   resizeEventEmitter,
   tickEventEmitter
 } from '../event-emitter/events';
@@ -28,10 +29,13 @@ import { Controller } from './controllers/controller';
 import { DracoLoader } from './loaders/dracoLoader';
 import { CubeTextureLoader } from './loaders/cubeTextureLoader';
 import { BackgroundCubeTexturesManager } from '../managers/background-cube-textures';
+import { Language } from '../language';
+import { Model } from '../../models/3D/environment/model';
 
 export class App3D {
   declare _debug: Debug;
   declare _logger: Logger;
+  declare _language: Language;
   declare _gui: GUI;
   declare _container: HTMLElement;
 
@@ -60,6 +64,7 @@ export class App3D {
   constructor(app: App) {
     this._debug = app._debug;
     this._logger = app._logger;
+    this._language = app._language;
     this._container = app._appContainer;
     this.setCanvas();
 
@@ -103,6 +108,7 @@ export class App3D {
     tickEventEmitter.on(() => this.update());
     assetLoadedEventEmitter.on((assetId: number) => this.setModel(assetId));
     cubeTextureLoadedEventEmitter.on(() => this.setBackgroundCubeTexture());
+    requestInteractionEventEmitter.on((model: Model) => this._world.requestInteraction(model));
   }
 
   /**

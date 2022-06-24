@@ -1,0 +1,31 @@
+.hidden{
+  display: none !important;
+}
+
+.interactable-label-container{
+  position: absolute;
+  height: 10%;
+  width: 25%;
+  background-color: white;
+  top: 48%;
+  left: 38%;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 3px;cursor: pointer;
+
+  .inner-interactable-label-container{
+    border: 2px solid black;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+
+    .interactable-label-text{
+      font-size: 25px;
+    }
+  }
+}

@@ -69,7 +69,7 @@ export class CharactersManager {
   private setAssetIds(): void {
     this._characters
       .filter((character) => character._assetId === -1)
-      .forEach((character) => (character._assetId = Math.floor(Math.random() * this._assets.length)));
+      .forEach((character) => (character._assetId = this._assets[Math.floor(Math.random() * this._assets.length)]._id));
   }
 
   /**
@@ -116,9 +116,5 @@ export class CharactersManager {
    */
   public getMainCharacter(): Character {
     return this.getCharacterWithId(mainCharacterId);
-  }
-
-  public loadCharacter(character: Character) {
-    const c = character;
   }
 }
