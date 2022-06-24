@@ -1,3 +1,4 @@
+import { Model } from '../../models/3D/environment/model';
 import { TypedEvent } from './typed-event';
 
 export const tickEventEmitter = new TypedEvent<void>();
@@ -14,3 +15,8 @@ export const assetLoadedEventEmitter = new TypedEvent<number>();
  * The loaded texture id is passed as parameter.
  */
 export const cubeTextureLoadedEventEmitter = new TypedEvent<number>();
+
+/**
+ * Notify that an interaction is ongoing.
+ */
+export const requestInteractionEventEmitter = new TypedEvent<Model>();

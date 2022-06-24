@@ -7,10 +7,10 @@ import { Item } from './items/item';
 import { Light } from '../light';
 import { Floor } from './floors/floor';
 import { App3D } from '../../../app/3D/app-3D';
-import { DracoLoader } from '../../../app/3D/loaders/dracoLoader';
-import { CubeTextureLoader } from '../../../app/3D/loaders/cubeTextureLoader';
 import { BackgroundCubeTexture } from './backgrounds/background';
-import { BackgroundCubeTexturesManager } from '~/app/managers/background-cube-textures';
+import { BackgroundCubeTexturesManager } from '../../../app/managers/background-cube-textures';
+import { InteractLabel } from '../../../app/3D/interact-label/interact-label';
+import { Model } from './model';
 
 export interface IEnvironment {}
 
@@ -23,12 +23,13 @@ export class Environment implements IEnvironment {
   #isDefault: boolean;
 
   declare _mainCharacterStartingPosition: THREE.Vector3;
-  declare _mainCharacterInitialYAngleRotation: number;
+  declare _mainCharacterStartingRotation: THREE.Euler;
 
   declare _backgroundCubeTextureId: number;
   declare _backgroundCubeTexturesManager: BackgroundCubeTexturesManager;
 
   declare _mainCharacter: MainCharacter;
+  declare _interactionCheckpoint: Item;
   declare _backgroundCubeTexture: BackgroundCubeTexture;
   declare _floor: Floor;
   declare _characters: Array<Character>;
@@ -41,6 +42,10 @@ export class Environment implements IEnvironment {
   declare _scene: THREE.Scene;
   declare _isDebug: boolean;
 
+  declare _interactableModels: Array<Model>;
+  // Interact label
+  declare _interactLabel: InteractLabel;
+
   /**
    * Constructor
    */
@@ -50,10 +55,10 @@ export class Environment implements IEnvironment {
     description: string,
     isDefault: boolean,
     mainCharacterStartingPosition: THREE.Vector3 = new THREE.Vector3(),
-    initialYAngleRotation: number,
+    mainCharacterStartingRotation: THREE.Euler = new THREE.Euler(),
 
     backgroundCubeTextureId: number,
-    floor: Floor,
+    //floor: Floor,
     characters: Array<Character>,
     buildings: Array<Building>,
     items: Array<Item>,
@@ -67,14 +72,16 @@ export class Environment implements IEnvironment {
     this.#isDefault = isDefault;
 
     this._mainCharacterStartingPosition = mainCharacterStartingPosition;
-    this._mainCharacterInitialYAngleRotation = initialYAngleRotation;
+    this._mainCharacterStartingRotation = mainCharacterStartingRotation;
 
     this._backgroundCubeTextureId = backgroundCubeTextureId;
-    this._floor = floor;
+    //this._floor = floor;
     this._characters = characters;
     this._buildings = buildings;
     this._items = items;
     this._lights = lights;
+
+    this._interactableModels = [];
 
     this._logger.log(`${this.constructor.name} class instantiated:`, this);
   }
@@ -87,6 +94,8 @@ export class Environment implements IEnvironment {
     this._app3D = app3D;
     this._scene = this._app3D._scene;
     this._isDebug = this._app3D._debug.getActive();
+
+    this._interactLabel = new InteractLabel(this._app3D);
 
     this._backgroundCubeTexturesManager = this._app3D._backgroundCubeTexturesManager;
 
@@ -114,7 +123,10 @@ export class Environment implements IEnvironment {
    * assets near n meters from main character
    */
   public loadAssets(): void {
-    [this._floor, ...this._characters, ...this._buildings, ...this._items].forEach((model) => {
+    this._floor = new Floor();
+    this._scene.add(this._floor._asset);
+
+    [/*this._floor,*/ ...this._characters, ...this._buildings, ...this._items].forEach((model) => {
       model.setAppParams(this._app3D);
       model.loadAsset();
     });
@@ -127,7 +139,7 @@ export class Environment implements IEnvironment {
   public setMainCharacter(mainCharacter: MainCharacter): void {
     this._mainCharacter = mainCharacter;
     this._mainCharacter.setInitialPosition(this._mainCharacterStartingPosition);
-    this._mainCharacter.setInitialYRotation(this._mainCharacterInitialYAngleRotation);
+    this._mainCharacter.setRotation(this._mainCharacterStartingRotation);
   }
 
   /**
@@ -152,14 +164,19 @@ export class Environment implements IEnvironment {
    * @param assetId id of the loaded asset
    */
   public setModel(assetId: number): void {
-    [this._floor, ...this._characters, ...this._buildings, ...this._items]
+    [...this._characters, ...this._buildings, ...this._items]
       .filter((model) => !model._asset && model._assetId === assetId)
       .forEach((model) => {
         model.setAsset(assetId);
 
-        // if (model instanceof Floor) {
-        //   (this._mainCharacter as MainCharacter)._controller.setFloor(this._floor);
-        // }
+        // Set checkpoint for interactable models
+        if (model._isInteractable) {
+          this._interactableModels.push(model);
+
+          (model._checkpoint as Item).setAppParams(this._app3D);
+          const checkpointAssetId: number = this._app3D._itemsManager.getInteractionCheckpointItem()._assetId;
+          model.setCheckpoint(checkpointAssetId);
+        }
       });
   }
 
@@ -190,5 +207,31 @@ export class Environment implements IEnvironment {
    */
   public setBackgroundCubeTexture(): void {
     this._scene.background = this._backgroundCubeTexture._cubeTexture;
+  }
+
+  /**
+   * Update all elements in the scene
+   */
+  public update(): void {
+    if (!this._mainCharacter) return;
+
+    const interactingModels: Array<Model> = this._interactableModels.filter((model) => {
+      return (model._checkpoint as Item)._boundingBox?.intersectsBox(this._mainCharacter._boundingBox);
+    });
+
+    if (interactingModels.length === 1) {
+      const model: Model = interactingModels[0] as Model;
+      model.checkpointColliding = true;
+      !this._interactLabel.isVisible() && this._interactLabel.show(model);
+    } else {
+      this._interactableModels.forEach((model) => {
+        model.checkpointColliding = false;
+        this._interactLabel.isVisible() && this._interactLabel.hide();
+      });
+    }
+  }
+
+  public disposeEnvironment(): void {
+    [...this._characters, ...this._buildings, ...this._items].forEach((model) => model.disposeAsset());
   }
 }

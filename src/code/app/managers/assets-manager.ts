@@ -68,12 +68,4 @@ export class AssetsManager {
     const assets: Array<Asset> = this._assets.filter((asset) => asset._category === category);
     return assets;
   }
-
-  /**
-   * Load an asset
-   * @param id asset to load
-   */
-  public LoadAsset(id: number): void {
-    const asset: Asset = this.getAssetWithId(id) as Asset;
-  }
 }

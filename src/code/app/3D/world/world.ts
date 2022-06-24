@@ -15,12 +15,13 @@ import { BuildingsManager } from '../../../app/managers/buildings-manager';
 import { ItemsManager } from '../../../app/managers/items-manager';
 
 import { DracoLoader } from '../loaders/dracoLoader';
-import { Character } from '../../../models/3D/environment/characters/character';
-import { MainCharacter } from '../../../models/3D/environment/characters/main-character';
 import { Environment } from '../../../models/3D/environment/environment';
+import { Model } from '../../../models/3D/environment/model';
+import { MainCharacter } from '../../../models/3D/environment/characters/main-character';
+import { Character } from '../../../models/3D/environment/characters/character';
+import { Item } from '../../../models/3D/environment/items/item';
 
 import { Controller } from '../controllers/controller';
-import { CubeTextureLoader } from '../loaders/cubeTextureLoader';
 
 export class World {
   declare _app3D: App3D;
@@ -43,8 +44,10 @@ export class World {
 
   declare _loader: DracoLoader;
 
+  declare _worldQuaternion: THREE.Quaternion;
   declare _controller: Controller;
   declare _mainCharacter: Character;
+  declare _interactionCheckpoint: Item;
   declare _environment: Environment;
 
   /**
@@ -68,6 +71,15 @@ export class World {
 
     this._loader = this._app3D._loader;
 
+    this._worldQuaternion = new THREE.Quaternion();
+
+    {
+      // Set interaction checkpoint
+      this._interactionCheckpoint = this._itemsManager.getInteractionCheckpointItem();
+      this._interactionCheckpoint.setAppParams(this._app3D);
+      this._interactionCheckpoint.loadAsset();
+    }
+
     {
       // Set main character
       const {
@@ -81,12 +93,17 @@ export class World {
         _initialPosition,
         _initialSteer
       }: any = this._charactersManager.getMainCharacter();
+
       this._mainCharacter = new MainCharacter(
         _id,
         _name,
         _description,
         _height,
         _assetId,
+        false,
+        null,
+        null,
+        null,
         _speed,
         _canMove,
         _initialPosition,
@@ -117,13 +134,15 @@ export class World {
    */
   public setModel(assetId: number) {
     if (!this._mainCharacter._asset && this._mainCharacter._assetId === assetId) {
-      // This will happen only once at initialization
       this._mainCharacter.setAsset(assetId);
 
       this._controller = new Controller(this._app3D);
       (this._mainCharacter as MainCharacter).setController(this._controller);
 
       this._environment.setMainCharacter(this._mainCharacter as MainCharacter);
+    } else if (!this._interactionCheckpoint._asset && this._interactionCheckpoint._assetId === assetId) {
+      this._interactionCheckpoint.setAsset(assetId);
+      this._scene.remove(this._interactionCheckpoint._asset);
     }
 
     this._environment.setModel(assetId);
@@ -153,6 +172,8 @@ export class World {
    */
   public update(): void {
     (this._mainCharacter as MainCharacter)._controller?.update();
+
+    this._environment.update();
   }
 
   /**
@@ -168,5 +189,16 @@ export class World {
 
     this._environment.loadBackgroundCubeTexture();
     this._environment.loadAssets();
+  }
+
+  public requestInteraction(model: Model): void {
+    if (model._goToEnvironment) {
+      this._environment._mainCharacterStartingPosition = this._mainCharacter._asset.position;
+      this._environment.disposeEnvironment();
+      this.setEnvironment(model._goToEnvironment);
+    } else if (model._goToHTML) {
+    } else {
+    }
+    //this._environment.requestInteraction();
   }
 }
