@@ -171,7 +171,10 @@ export class World {
    * Update all elements in the scene
    */
   public update(): void {
-    (this._mainCharacter as MainCharacter)._controller?.update();
+    if (this._mainCharacter) {
+      (this._mainCharacter as MainCharacter)._controller?.update();
+      (this._mainCharacter as MainCharacter).update();
+    }
 
     this._environment.update();
   }

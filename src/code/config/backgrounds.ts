@@ -11,5 +11,13 @@ export const backgroundCubeTextures: Array<BackgroundCubeTexture> = [
     'ny.jpg',
     'pz.jpg',
     'nz.jpg'
+  ]),
+  new BackgroundCubeTexture(1, `Museum interior`, `Museum interior`, `${basePath}/museum interior/`, [
+    'px.jpg',
+    'nx.jpg',
+    'py.jpg',
+    'ny.jpg',
+    'pz.jpg',
+    'nz.jpg'
   ])
 ];

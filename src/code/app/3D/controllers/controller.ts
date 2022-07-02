@@ -9,8 +9,10 @@ import {
   forwardKeyboardKeys,
   backwardKeyboardKeys,
   leftKeyboardKeys,
-  rightKeyboardKeys
+  rightKeyboardKeys,
+  runKeyboardKeys
 } from '../../../config/controller';
+import { AnimationNames } from '../../../models/animations.dto';
 
 export class Move {
   declare forward: boolean;
@@ -45,8 +47,10 @@ export class Controller {
   declare gamepad: any;
   declare _touchController: any;
 
-  declare _move: Move;
   declare _explore: boolean;
+  declare _move: Move;
+  declare _isRunning: boolean;
+  declare _runCoefficient: number;
 
   declare _mainCharacterRotationAngle: number;
   declare _mainCharacterTraslationDistance: number;
@@ -63,8 +67,10 @@ export class Controller {
 
     this._raycaster = new THREE.Raycaster();
 
-    this._move = new Move();
     this._explore = false;
+    this._move = new Move();
+    this._isRunning = false;
+    this._runCoefficient = 2;
 
     this._mainCharacterRotationAngle = 0.05;
     this._mainCharacterTraslationDistance = (this._mainCharacter._speed * this._time._delta) / 80;
@@ -108,10 +114,22 @@ export class Controller {
    */
   private keyDown(e: KeyboardEvent): void {
     const code: string = e.code;
-    this._logger.log(`${this.constructor.name} - key down event detected. Key pressed: ${code}`);
 
-    if (![...forwardKeyboardKeys, ...backwardKeyboardKeys, ...leftKeyboardKeys, ...rightKeyboardKeys].includes(code))
+    if (
+      ![
+        ...forwardKeyboardKeys,
+        ...backwardKeyboardKeys,
+        ...leftKeyboardKeys,
+        ...rightKeyboardKeys,
+        ...runKeyboardKeys
+      ].includes(code)
+    ) {
       return;
+    }
+
+    if (runKeyboardKeys.includes(code)) {
+      this._isRunning = true;
+    }
 
     if (forwardKeyboardKeys.includes(code)) {
       this._move.forward = true;
@@ -132,10 +150,22 @@ export class Controller {
    */
   private keyUp(e: KeyboardEvent): void {
     const code: string = e.code;
-    this._logger.log(`${this.constructor.name} - key up event detected. Key pressed: ${code}`);
 
-    if (![...forwardKeyboardKeys, ...backwardKeyboardKeys, ...leftKeyboardKeys, ...rightKeyboardKeys].includes(code))
+    if (
+      ![
+        ...forwardKeyboardKeys,
+        ...backwardKeyboardKeys,
+        ...leftKeyboardKeys,
+        ...rightKeyboardKeys,
+        ...runKeyboardKeys
+      ].includes(code)
+    ) {
       return;
+    }
+
+    if (runKeyboardKeys.includes(code)) {
+      this._isRunning = false;
+    }
 
     if (forwardKeyboardKeys.includes(code)) {
       this._move.forward = false;
@@ -150,13 +180,13 @@ export class Controller {
     }
   }
 
-  mouseDown(e: MouseEvent) {
+  mouseDown(e: MouseEvent): void {
     this._explore = true;
     // move camera up
     this._logger.log(`${this.constructor.name} - exploring`);
   }
 
-  mouseUp(e: MouseEvent) {
+  mouseUp(e: MouseEvent): void {
     this._explore = false;
     // move camera down
     this._logger.log(`${this.constructor.name} - moving`);
@@ -173,12 +203,14 @@ export class Controller {
     if (!this._explore) {
       this.updateMainCharacterPosition();
     }
+
+    this.updateMainCharacterStatus();
   }
 
   /**
    * Update main character orientation
    */
-  private updateMainCharacterOrientation() {
+  private updateMainCharacterOrientation(): void {
     if (this._move.right || this._move.left) {
       let angle: number = this._move.right ? -this._mainCharacterRotationAngle : this._mainCharacterRotationAngle;
       this._mainCharacter._asset.rotateY(angle);
@@ -188,14 +220,41 @@ export class Controller {
   /**
    * Update main character position
    */
-  private updateMainCharacterPosition() {
-    if (this._move.forward || this._move.backward) {
-      let distance: number = this._move.forward
-        ? -this._mainCharacterTraslationDistance
-        : this._mainCharacterTraslationDistance;
-      this._mainCharacter._asset.translateZ(distance);
+  private updateMainCharacterPosition(): void {
+    let distance: number = 0;
+    if (this._move.forward) {
+      if (this._isRunning) {
+        distance = -this._mainCharacterTraslationDistance * this._runCoefficient;
+      } else {
+        distance = -this._mainCharacterTraslationDistance;
+      }
+    } else if (this._move.backward) {
+      distance = this._mainCharacterTraslationDistance;
+    }
 
-      this._mainCharacter.setBoundingBox();
+    this._mainCharacter._asset.translateZ(distance);
+
+    this._mainCharacter.setBoundingBox();
+  }
+
+  /**
+   * Update main character status
+   */
+  private updateMainCharacterStatus(): void {
+    if (this._move.forward) {
+      if (this._isRunning) {
+        this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.run &&
+          this._mainCharacter._animationCurrentStatus$.next(AnimationNames.run);
+      } else {
+        this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.walkForward &&
+          this._mainCharacter._animationCurrentStatus$.next(AnimationNames.walkForward);
+      }
+    } else if (this._move.backward) {
+      this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.walkBackward &&
+        this._mainCharacter._animationCurrentStatus$.next(AnimationNames.walkBackward);
+    } else if (!this._move.forward || !this._move.backward) {
+      this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.idle &&
+        this._mainCharacter._animationCurrentStatus$.next(AnimationNames.idle);
     }
   }
 }

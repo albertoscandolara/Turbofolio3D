@@ -23,7 +23,7 @@
     "convert-units": "^2.3.4",
     "jquery": "3.5.1",
     "lil-gui": "^0.16.1",
-    "rxjs": "^7.5.4"
+    "rxjs": "^7.5.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",

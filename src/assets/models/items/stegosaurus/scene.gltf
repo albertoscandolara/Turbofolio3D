@@ -1,0 +1,377 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.2.9",
+        "version" : "2.0"
+    },
+    "extensionsUsed" : [
+        "KHR_draco_mesh_compression"
+    ],
+    "extensionsRequired" : [
+        "KHR_draco_mesh_compression"
+    ],
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                4
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Cube",
+            "scale" : [
+                1.3607338666915894,
+                1.0906682014465332,
+                1.6203242540359497
+            ],
+            "translation" : [
+                -4.481100559234619,
+                1.5719316005706787,
+                0.039981596171855927
+            ]
+        },
+        {
+            "mesh" : 1,
+            "name" : "Cube.001",
+            "scale" : [
+                1.3607338666915894,
+                1.0906682014465332,
+                1.6203242540359497
+            ],
+            "translation" : [
+                -4.815658092498779,
+                1.462852954864502,
+                0.008935749530792236
+            ]
+        },
+        {
+            "mesh" : 2,
+            "name" : "Eyes",
+            "rotation" : [
+                0,
+                0,
+                -0.8308728933334351,
+                0.5564624071121216
+            ],
+            "scale" : [
+                0.2412968873977661,
+                0.37831366062164307,
+                0.34493523836135864
+            ],
+            "translation" : [
+                4.350924968719482,
+                -0.6417379379272461,
+                0.2508278787136078
+            ]
+        },
+        {
+            "mesh" : 3,
+            "name" : "Spikes",
+            "scale" : [
+                0.48991432785987854,
+                0.39268073439598083,
+                0.5833764672279358
+            ],
+            "translation" : [
+                2.0346455574035645,
+                0.6241180896759033,
+                1.3063238859176636
+            ]
+        },
+        {
+            "children" : [
+                0,
+                1,
+                2,
+                3
+            ],
+            "mesh" : 4,
+            "name" : "Body",
+            "scale" : [
+                0.7348975539207458,
+                0.916869044303894,
+                0.6171603798866272
+            ],
+            "translation" : [
+                1.3517236709594727,
+                2.1524720191955566,
+                0.01963973045349121
+            ]
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Cube.003",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1
+                    },
+                    "extensions" : {
+                        "KHR_draco_mesh_compression" : {
+                            "bufferView" : 0,
+                            "attributes" : {
+                                "POSITION" : 0,
+                                "NORMAL" : 1
+                            }
+                        }
+                    },
+                    "indices" : 2,
+                    "mode" : 4
+                }
+            ]
+        },
+        {
+            "name" : "Cube.004",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 3,
+                        "NORMAL" : 4
+                    },
+                    "extensions" : {
+                        "KHR_draco_mesh_compression" : {
+                            "bufferView" : 1,
+                            "attributes" : {
+                                "POSITION" : 0,
+                                "NORMAL" : 1
+                            }
+                        }
+                    },
+                    "indices" : 5,
+                    "mode" : 4
+                }
+            ]
+        },
+        {
+            "name" : "Sphere",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 6,
+                        "NORMAL" : 7
+                    },
+                    "extensions" : {
+                        "KHR_draco_mesh_compression" : {
+                            "bufferView" : 2,
+                            "attributes" : {
+                                "POSITION" : 0,
+                                "NORMAL" : 1
+                            }
+                        }
+                    },
+                    "indices" : 8,
+                    "mode" : 4
+                }
+            ]
+        },
+        {
+            "name" : "Cube.001",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 9,
+                        "NORMAL" : 10
+                    },
+                    "extensions" : {
+                        "KHR_draco_mesh_compression" : {
+                            "bufferView" : 3,
+                            "attributes" : {
+                                "POSITION" : 0,
+                                "NORMAL" : 1
+                            }
+                        }
+                    },
+                    "indices" : 11,
+                    "mode" : 4
+                }
+            ]
+        },
+        {
+            "name" : "Cube",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 12,
+                        "NORMAL" : 13
+                    },
+                    "extensions" : {
+                        "KHR_draco_mesh_compression" : {
+                            "bufferView" : 4,
+                            "attributes" : {
+                                "POSITION" : 0,
+                                "NORMAL" : 1
+                            }
+                        }
+                    },
+                    "indices" : 14,
+                    "mode" : 4
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "componentType" : 5126,
+            "count" : 772,
+            "max" : [
+                -1.3813042640686035,
+                -0.8819286823272705,
+                0.4848223924636841
+            ],
+            "min" : [
+                -1.9091135263442993,
+                -1.5808687210083008,
+                -0.4848223924636841
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 772,
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5123,
+            "count" : 4608,
+            "type" : "SCALAR"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 246,
+            "max" : [
+                -1.6243493556976318,
+                -1.0720529556274414,
+                0.19092446565628052
+            ],
+            "min" : [
+                -2.2035460472106934,
+                -1.651536226272583,
+                -0.19092446565628052
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 246,
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5123,
+            "count" : 1452,
+            "type" : "SCALAR"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 3968,
+            "max" : [
+                0.14533519744873047,
+                0.09275200963020325,
+                0.08469145745038986
+            ],
+            "min" : [
+                -0.07499361038208008,
+                -0.11484380066394806,
+                -1.5449906587600708
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 3968,
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5123,
+            "count" : 5760,
+            "type" : "SCALAR"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 216,
+            "max" : [
+                3.619546890258789,
+                5.418529033660889,
+                -0.0019412785768508911
+            ],
+            "min" : [
+                -16.1403751373291,
+                -2.9434165954589844,
+                -4.468352794647217
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 216,
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5123,
+            "count" : 1080,
+            "type" : "SCALAR"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 25983,
+            "max" : [
+                4.672542572021484,
+                1.2619638442993164,
+                1.8353605270385742
+            ],
+            "min" : [
+                -7.787731170654297,
+                -2.4558897018432617,
+                -1.8230984210968018
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5126,
+            "count" : 25983,
+            "type" : "VEC3"
+        },
+        {
+            "componentType" : 5123,
+            "count" : 155520,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 4714,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1887,
+            "byteOffset" : 4716
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 16678,
+            "byteOffset" : 6604
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1617,
+            "byteOffset" : 23284
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 123804,
+            "byteOffset" : 24904
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 148708,
+            "uri" : "scene.bin"
+        }
+    ]
+}

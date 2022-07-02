@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { centimeter, meter } from '../../../app/3D/utils/units';
 import { DracoLoader } from '../../../app/3D/loaders/dracoLoader';
 import { Logger } from '../../../app/logger';
+import { AnimationClips, AnimationNames } from '../../../models/animations.dto';
 
 const length = require('convert-units');
 
@@ -39,6 +40,7 @@ export class Asset {
   declare _category: AssetCategory;
   declare _asset: THREE.Object3D;
   declare _loadingStatus: AssetLoadingStatus;
+  declare _animations: AnimationClips;
 
   /**
    * Constructor
@@ -55,6 +57,13 @@ export class Asset {
     category: AssetCategory
   ) {
     this._logger = new Logger();
+
+    this._animations = {
+      idle: null,
+      run: null,
+      walkForward: null,
+      walkBackward: null
+    };
 
     this._id = id;
     this.#name = name;
@@ -88,9 +97,40 @@ export class Asset {
   }
 
   /**
+   * Set asset animations
+   */
+  public setAnimations(animationClipList: Array<THREE.AnimationClip>): void {
+    if (!animationClipList) {
+      return;
+    }
+
+    const idleAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.idle
+    );
+    this._animations.idle = idleAnimation ? idleAnimation : null;
+
+    const runAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.run
+    );
+    this._animations.run = runAnimation ? runAnimation : null;
+
+    const walkBackwardAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.walkBackward
+    );
+    this._animations.walkBackward = walkBackwardAnimation ? walkBackwardAnimation : null;
+
+    const walkForwardAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.walkForward
+    );
+    this._animations.walkForward = walkForwardAnimation ? walkForwardAnimation : null;
+
+    // Eventually add new animations here
+  }
+
+  /**
    * Set asset offset scale
    */
-  public setOffsetScale() {
+  public setOffsetScale(): void {
     const originalBoundingBox: THREE.Box3 = new THREE.Box3().setFromObject(this._asset);
 
     const originalMaxModelHeight: number = originalBoundingBox.max.y - originalBoundingBox.min.y;
@@ -100,7 +140,7 @@ export class Asset {
         `${this.constructor.name} - Model '${this._id}' has default height set to ${this._defaultHeight}. Preserving scale`
       );
 
-      this._defaultHeight == originalMaxModelHeight;
+      this._defaultHeight = originalMaxModelHeight;
     }
 
     const scaleFactor: number = length(this._defaultHeight).from(centimeter).to(meter) / originalMaxModelHeight;

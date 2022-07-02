@@ -73,8 +73,34 @@ export const environments: Array<Environment> = [
         null,
         null,
         null,
-        new THREE.Vector3(10, 0, -3),
+        new THREE.Vector3(20, 0, -3),
         new THREE.Euler(0, 0, 0)
+      ),
+      new Item(
+        1,
+        `Stegosaurus`,
+        `Stegosaurus`,
+        1,
+        5,
+        false,
+        null,
+        null,
+        null,
+        new THREE.Vector3(20, 0, -10),
+        new THREE.Euler(0, Math.PI / 2, 0)
+      ),
+      new Item(
+        2,
+        `Allosaurus`,
+        `Allosaurus`,
+        1,
+        6,
+        false,
+        null,
+        null,
+        null,
+        new THREE.Vector3(20, 0, -17),
+        new THREE.Euler(0, Math.PI / 2, 0)
       )
     ],
     [new Light(new THREE.AmbientLight('#ffffff', 1), new THREE.Vector3(0, 20, 10))]
@@ -143,79 +169,55 @@ export const environments: Array<Environment> = [
         new THREE.Vector3(0, 0, -50),
         new THREE.Euler(0, -Math.PI, 0)
       )
-      // new Building(
-      //   2,
-      //   `Louvre`,
-      //   `The Louvre museum`,
-      //   1,
-      //   1,
-      //   true,
-      //   new Item(
-      //     1,
-      //     `Checkpoint`,
-      //     `Checkpoint`,
-      //     1,
-      //     3,
-      //     false,
-      //     null,
-      //     null,
-      //     null,
-      //     new THREE.Vector3(40, 0, 28),
-      //     new THREE.Euler(0, 0, 0)
-      //   ),
-      //   null,
-      //   null,
-      //   new THREE.Vector3(40, 0, 40),
-      //   new THREE.Euler(0, Math.PI / 2, 0)
-      // )
     ],
     [],
     [
-      new Light(new THREE.AmbientLight('#ffffff', 1), new THREE.Vector3(0, 20, 10))
+      new Light(new THREE.AmbientLight('#ffffff', 2), new THREE.Vector3(0, 20, 10))
       //new Light(new THREE.DirectionalLight('#ffffff', 1), new THREE.Vector3(0, 20, 10))
     ]
   ),
   new Environment(
     2,
-    `ModelsBuilding`,
-    ``,
+    `3D models exibition room`,
+    `3D Models exhibition area`,
     false,
     new THREE.Vector3(),
     new THREE.Euler(0, 0, 0),
-    0,
-    //new Floor(0, `Dust`, `Dust`, 5, 2, false, null, null, null, new THREE.Vector3(0, -0.091, 0), 0),
+    1,
+    [],
+    [],
     [
-      new Character(
-        0,
-        `Character`,
-        `Character`,
-        700,
-        0,
-        true,
-        new Item(
-          1,
-          `Checkpoint`,
-          `Checkpoint`,
-          70,
-          3,
-          false,
-          null,
-          null,
-          null,
-          new THREE.Vector3(-26, 0, 5),
-          new THREE.Euler(0, 0, 0)
-        ),
-        null,
-        null,
-        0.1,
+      new Item(
+        1,
+        `Stegosaurus`,
+        `Stegosaurus`,
+        1,
+        5,
         false,
-        new THREE.Vector3(-27, 0, 5),
-        new THREE.Euler(0, -Math.PI / 2, 0)
+        null,
+        null,
+        null,
+        new THREE.Vector3(20, 0, -15),
+        new THREE.Euler(0, Math.PI / 2, 0)
+      ),
+      new Item(
+        2,
+        `Allosaurus`,
+        `Allosaurus`,
+        1,
+        6,
+        false,
+        null,
+        null,
+        null,
+        new THREE.Vector3(20, 0, -25),
+        new THREE.Euler(0, Math.PI / 2, 0)
       )
     ],
-    [],
-    [],
-    [new Light(new THREE.AmbientLight('#ffffff', 1), new THREE.Vector3(0, 10, 0))]
+    [
+      new Light(new THREE.AmbientLight('#ffffff', 1), new THREE.Vector3(0, 10, 10)),
+      new Light(new THREE.PointLight('#ffffff', 15), new THREE.Vector3(10, 10, 0))
+    ]
   ),
   new Environment(
     3,
@@ -225,7 +227,6 @@ export const environments: Array<Environment> = [
     new THREE.Vector3(),
     new THREE.Euler(0, 0, 0),
     0,
-    //new Floor(0, `Dust`, `Dust`, 1, 2, false, null, null, null, new THREE.Vector3(0, 0, 0), 0),
     [],
     [],
     [],
@@ -239,7 +240,6 @@ export const environments: Array<Environment> = [
     new THREE.Vector3(),
     new THREE.Euler(0, 0, 0),
     0,
-    //new Floor(0, `Dust`, `Dust`, 1, 2, false, null, null, null, new THREE.Vector3(0, 0, 0), 0),
     [],
     [],
     [],

@@ -4,17 +4,22 @@ import { Logger } from '../../../app/logger';
 import { DracoLoader } from '../../../app/3D/loaders/dracoLoader';
 import { AssetsManager } from '../../../app/managers/assets-manager';
 import { Asset } from './asset';
-import { centimeter, meter } from './../../../app/3D/utils/units';
 import { App3D } from '../../../app/3D/app-3D';
 import { Camera } from '../../../app/3D/camera';
 import { xAxis, yAxis, zAxis } from '../../../config/axes';
 import { Item } from './items/item';
+import { Time } from '../../../app/3D/utils/time';
+import { AnimationActions, AnimationClips, AnimationNames } from '../../../models/animations.dto';
+import { BehaviorSubject, map } from 'rxjs';
 
-const length = require('convert-units');
 const SkeletonUtils = require('three/examples/jsm/utils/SkeletonUtils');
 
 export class Model {
   declare _logger: Logger;
+
+  declare _animationMixer: THREE.AnimationMixer;
+  declare _animationActions: AnimationActions;
+  declare _animationCurrentStatus$: BehaviorSubject<AnimationNames>;
 
   declare _assetsManager: AssetsManager;
   declare _loader: DracoLoader;
@@ -39,6 +44,7 @@ export class Model {
 
   // App 3D params
   declare _scene: THREE.Scene;
+  declare _time: Time;
   declare _camera: Camera;
   declare _isDebug: boolean;
 
@@ -62,6 +68,17 @@ export class Model {
     rotation: THREE.Euler = new THREE.Euler(0, 0, 0)
   ) {
     this._logger = new Logger();
+
+    // Animation parameters
+    this._animationActions = {
+      idle: null,
+      run: null,
+      walkForward: null,
+      walkBackward: null
+    };
+
+    this._animationCurrentStatus$ = new BehaviorSubject<AnimationNames>(AnimationNames.walkForward);
+    this._animationCurrentStatus$.pipe(map(() => this.playAnimation)).subscribe();
 
     this._assetsManager = new AssetsManager();
     this._loader = new DracoLoader();
@@ -145,6 +162,7 @@ export class Model {
   public setAppParams(app3D: App3D) {
     this._scene = app3D._scene;
     this._isDebug = app3D._debug.getActive();
+    this._time = app3D._time;
 
     if (this._name === 'Main character') {
       this._camera = app3D._camera;
@@ -156,16 +174,22 @@ export class Model {
    * @param asset id of the asset to set
    */
   public setAsset(assetId: number): void {
-    const asset: THREE.Object3D = this._assetsManager.getAssetWithId(assetId)._asset;
-    this._asset = SkeletonUtils.clone(asset) as THREE.Object3D;
+    const assetObj: Asset = this._assetsManager.getAssetWithId(assetId);
+    this._asset = SkeletonUtils.clone(assetObj._asset) as THREE.Object3D;
 
     this._logger.log(`${this.constructor.name} - Asset with id '${this._assetId}' cloned`, this);
 
+    // Set model physical properties
     this.setScale();
     this.setInitialPosition(this._initialPosition);
     this.setRotation(this._rotation);
-    this.setBoundingBox();
 
+    // Set animation tools
+    this.setAnimationMixer(this._asset);
+    this.setAnimationActions(assetObj._animations);
+    this._animationCurrentStatus$.next(AnimationNames.idle);
+
+    this.setBoundingBox();
     this.setDebugHelperTools();
 
     if (this._camera) {
@@ -215,6 +239,88 @@ export class Model {
     this._boundingBox = newBoundingBox;
 
     this.setHeight();
+  }
+
+  /**
+   * Set model animation mixer
+   * @param model model
+   */
+  private setAnimationMixer(model: THREE.Object3D): void {
+    this._animationMixer = new THREE.AnimationMixer(model);
+  }
+
+  /**
+   * Set model animations
+   */
+  private setAnimationActions(animations: AnimationClips): void {
+    this._animationActions.idle =
+      animations.idle && this._animationMixer.clipAction(animations.idle as THREE.AnimationClip);
+    this._animationActions.run =
+      animations.run && this._animationMixer.clipAction(animations.run as THREE.AnimationClip);
+    this._animationActions.walkForward =
+      animations.walkForward && this._animationMixer.clipAction(animations.walkForward as THREE.AnimationClip);
+    this._animationActions.walkBackward =
+      animations.walkBackward && this._animationMixer.clipAction(animations.walkBackward as THREE.AnimationClip);
+  }
+
+  /**
+   * Play animation based on current status
+   */
+  public playAnimation(): void {
+    console.log(`playAnimation`);
+    // Stop current animation
+    {
+      this._animationActions.idle?.stop();
+      this._animationActions.run?.stop();
+      this._animationActions.walkBackward?.stop();
+      this._animationActions.walkForward?.stop();
+    }
+
+    // Play new one
+    switch (this._animationCurrentStatus$.value) {
+      case AnimationNames.idle:
+        this.playAnimationIdle();
+        break;
+      case AnimationNames.run:
+        this.playAnimationRun();
+        break;
+      case AnimationNames.walkBackward:
+        this.playAnimationWalkBackward();
+        break;
+      case AnimationNames.walkForward:
+        this.playAnimationWalkForward();
+        break;
+      default:
+        this.playAnimationIdle();
+    }
+  }
+
+  /**
+   * Manage model idle animation
+   */
+  private playAnimationIdle(): void {
+    this._animationActions.idle?.play();
+  }
+
+  /**
+   *  Manage model run animation
+   */
+  private playAnimationRun(): void {
+    this._animationActions.run?.play();
+  }
+
+  /**
+   * Manage model walk backward animation
+   */
+  private playAnimationWalkBackward(): void {
+    this._animationActions.walkBackward?.play();
+  }
+
+  /**
+   * Manage model walk forward animation
+   */
+  private playAnimationWalkForward(): void {
+    this._animationActions.walkForward?.play();
   }
 
   /**
@@ -292,6 +398,8 @@ export class Model {
    * Dispose asset
    */
   public disposeAsset(): void {
+    this._animationCurrentStatus$.unsubscribe();
+
     let assetsToDispose: Array<THREE.Object3D> = [];
     assetsToDispose.push(this._asset);
     if (this._checkpoint) {
@@ -321,5 +429,12 @@ export class Model {
 
       this._scene.remove(asset);
     });
+  }
+
+  /**
+   * Update model
+   */
+  public update(): void {
+    this._asset && this._animationMixer.update(this._time._delta * 0.001);
   }
 }

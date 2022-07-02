@@ -57,9 +57,7 @@ export class Floor /*extends Model*/ {
   /**
    * Constructor
    */
-  constructor() // initialPosition: THREE.Vector3 = new THREE.Vector3(), // goToHTML: number | null, // goToEnvironment: number | null, // checkpoint: Item | null, // isInteractable: boolean, // assetId: number, // height: number, // description: string, // name: string, // id: number,
-  // initialYAngleRotation: number = 0
-  {
+  constructor() { // initialYAngleRotation: number = 0 // initialPosition: THREE.Vector3 = new THREE.Vector3(), // goToHTML: number | null, // goToEnvironment: number | null, // checkpoint: Item | null, // isInteractable: boolean, // assetId: number, // height: number, // description: string, // name: string, // id: number,
     // super(
     //   id,
     //   name,

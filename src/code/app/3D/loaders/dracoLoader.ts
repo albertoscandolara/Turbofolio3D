@@ -55,10 +55,11 @@ export class DracoLoader {
 
       asset._asset.traverse(function (object) {
         object.frustumCulled = false;
-        // object.castShadow = true;
-        // object.receiveShadow = true;
+        object.castShadow = true;
+        object.receiveShadow = true;
       });
 
+      asset.setAnimations(gltf.animations);
       asset.setOffsetScale();
       asset.setOffsetRotation();
       asset.setOffsetPosition();
