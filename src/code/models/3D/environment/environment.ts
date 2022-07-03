@@ -213,7 +213,7 @@ export class Environment implements IEnvironment {
    * Update all elements in the scene
    */
   public update(): void {
-    //[...this._characters, ...this._buildings, ...this._items].forEach((model) => model.playAnimation());
+    [...this._characters, ...this._buildings, ...this._items].forEach((model) => model.update());
 
     if (!this._mainCharacter) return;
 

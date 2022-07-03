@@ -7,7 +7,6 @@ export const enum AnimationNames {
 }
 
 export interface AnimationClips {
-  none: null;
   idle: THREE.AnimationClip | null;
   run: THREE.AnimationClip | null;
   walkBackward: THREE.AnimationClip | null;

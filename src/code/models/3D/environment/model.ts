@@ -71,14 +71,15 @@ export class Model {
 
     // Animation parameters
     this._animationActions = {
+      none: null,
       idle: null,
       run: null,
       walkForward: null,
       walkBackward: null
     };
 
-    this._animationCurrentStatus$ = new BehaviorSubject<AnimationNames>(AnimationNames.walkForward);
-    this._animationCurrentStatus$.pipe(map(() => this.playAnimation)).subscribe();
+    this._animationCurrentStatus$ = new BehaviorSubject<AnimationNames>(AnimationNames.none);
+    this._animationCurrentStatus$.pipe(map(() => this.playAnimation())).subscribe();
 
     this._assetsManager = new AssetsManager();
     this._loader = new DracoLoader();
@@ -267,7 +268,6 @@ export class Model {
    * Play animation based on current status
    */
   public playAnimation(): void {
-    console.log(`playAnimation`);
     // Stop current animation
     {
       this._animationActions.idle?.stop();
@@ -278,6 +278,9 @@ export class Model {
 
     // Play new one
     switch (this._animationCurrentStatus$.value) {
+      case AnimationNames.none:
+        this.playAnimationNone();
+        break;
       case AnimationNames.idle:
         this.playAnimationIdle();
         break;
@@ -294,6 +297,11 @@ export class Model {
         this.playAnimationIdle();
     }
   }
+
+  /**
+   * Manage model no animation
+   */
+  private playAnimationNone(): void {}
 
   /**
    * Manage model idle animation

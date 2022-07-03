@@ -2,6 +2,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const rules = require('require.all')('./tasks/rules');
 const plugins = require('require.all')('./tasks/plugins');
+const { SourceMapDevToolPlugin } = require('webpack');
 
 module.exports = (options) => {
   const environment = options.WEBPACK_BUNDLE ? 'production' : 'development';
@@ -31,10 +32,23 @@ module.exports = (options) => {
           use: {
             loader: 'url-loader'
           }
+        },
+        {
+          test: /\.js$/,
+          enforce: 'pre',
+          use: ['source-map-loader']
         }
       ]
     },
-    plugins: [plugins.html, plugins.images, plugins.extractStyles, plugins.purgeStyles],
+    plugins: [
+      plugins.html,
+      plugins.images,
+      plugins.extractStyles,
+      plugins.purgeStyles,
+      new SourceMapDevToolPlugin({
+        filename: '[file].map'
+      })
+    ],
     devServer: {
       open: true,
       port: 4000,
