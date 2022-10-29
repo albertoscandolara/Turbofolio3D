@@ -198,6 +198,10 @@ export class Controller {
    * Update orbit controls
    */
   public update(): void {
+    if (this._mainCharacter._currentAnimationName$.value === AnimationNames.talk) {
+      return;
+    }
+
     this.updateMainCharacterOrientation();
 
     if (!this._explore) {
@@ -243,18 +247,14 @@ export class Controller {
   private updateMainCharacterStatus(): void {
     if (this._move.forward) {
       if (this._isRunning) {
-        this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.run &&
-          this._mainCharacter._animationCurrentStatus$.next(AnimationNames.run);
+        this._mainCharacter.setCurrentAnimationName(AnimationNames.run);
       } else {
-        this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.walkForward &&
-          this._mainCharacter._animationCurrentStatus$.next(AnimationNames.walkForward);
+        this._mainCharacter.setCurrentAnimationName(AnimationNames.walkForward);
       }
     } else if (this._move.backward) {
-      this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.walkBackward &&
-        this._mainCharacter._animationCurrentStatus$.next(AnimationNames.walkBackward);
+      this._mainCharacter.setCurrentAnimationName(AnimationNames.walkBackward);
     } else if (!this._move.forward || !this._move.backward) {
-      this._mainCharacter._animationCurrentStatus$.value !== AnimationNames.idle &&
-        this._mainCharacter._animationCurrentStatus$.next(AnimationNames.idle);
+      this._mainCharacter.setCurrentAnimationName(AnimationNames.idle);
     }
   }
 }

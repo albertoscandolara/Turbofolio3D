@@ -59,8 +59,10 @@ export class Asset {
     this._logger = new Logger();
 
     this._animations = {
+      greet: null,
       idle: null,
       run: null,
+      talk: null,
       walkForward: null,
       walkBackward: null
     };
@@ -104,6 +106,11 @@ export class Asset {
       return;
     }
 
+    const greetAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.greet
+    );
+    this._animations.greet = greetAnimation ? greetAnimation : null;
+
     const idleAnimation: THREE.AnimationClip | undefined = animationClipList.find(
       (animationClip) => animationClip.name === AnimationNames.idle
     );
@@ -113,6 +120,11 @@ export class Asset {
       (animationClip) => animationClip.name === AnimationNames.run
     );
     this._animations.run = runAnimation ? runAnimation : null;
+
+    const talkAnimation: THREE.AnimationClip | undefined = animationClipList.find(
+      (animationClip) => animationClip.name === AnimationNames.talk
+    );
+    this._animations.talk = talkAnimation ? talkAnimation : null;
 
     const walkBackwardAnimation: THREE.AnimationClip | undefined = animationClipList.find(
       (animationClip) => animationClip.name === AnimationNames.walkBackward

@@ -22,6 +22,8 @@ import { Character } from '../../../models/3D/environment/characters/character';
 import { Item } from '../../../models/3D/environment/items/item';
 
 import { Controller } from '../controllers/controller';
+import { AnimationNames } from '../../../models/animations.dto';
+import { NumberKeyframeTrack } from 'three';
 
 export class World {
   declare _app3D: App3D;
@@ -117,7 +119,7 @@ export class World {
     {
       // Set initial environment
       const environment = this._environmentsManager.getDefaultEnvironment();
-      this.setEnvironment(environment._id);
+      this.changeEnvironment(environment._id);
     }
 
     if (app3D._debug.getActive()) {
@@ -180,9 +182,21 @@ export class World {
   }
 
   /**
-   * Set environment
+   * Change environment
    */
-  public setEnvironment(id: number): void {
+  public changeEnvironment(id: number): void {
+    if (this._environment) {
+      if (this._environment?._id === id) {
+        this._logger.warn(
+          `${this.constructor.name} - current environment has same id of the requested environment. Do not switch.`
+        );
+
+        return;
+      }
+
+      this._environment.disposeEnvironment();
+    }
+
     this._environment = this._environmentsManager.getEnvironmentWithId(id);
     this._environment.setAppParams(this._app3D);
 
@@ -194,14 +208,19 @@ export class World {
     this._environment.loadAssets();
   }
 
-  public requestInteraction(model: Model): void {
-    if (model._goToEnvironment) {
-      this._environment._mainCharacterStartingPosition = this._mainCharacter._asset.position;
-      this._environment.disposeEnvironment();
-      this.setEnvironment(model._goToEnvironment);
-    } else if (model._goToHTML) {
-    } else {
-    }
-    //this._environment.requestInteraction();
+  /**
+   * The user has interacted with a model that has to show a tab. Show it.
+   * @param {Model} model model interacting with the main character
+   */
+  public setInteractionTab(model: Model): void {
+    // Set talk animation both on main character and on interacting character.
+    // Set different timeouts for a bit of delay one from the other
+    model.setCurrentAnimationName(AnimationNames.talk);
+    const timeout: number = Math.random();
+    window.setTimeout(() => {
+      this._mainCharacter.setCurrentAnimationName(AnimationNames.talk);
+    }, timeout);
+
+    const interactionTabId: number = model._goToHTML as number;
   }
 }

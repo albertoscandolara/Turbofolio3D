@@ -136,7 +136,7 @@ export const environments: Array<Environment> = [
           new THREE.Euler(0, 0, 0)
         ),
         null,
-        null,
+        1,
         0.1,
         false,
         new THREE.Vector3(5, 0, -29),
@@ -164,7 +164,7 @@ export const environments: Array<Environment> = [
           new THREE.Vector3(0, 0, -29),
           new THREE.Euler(0, 0, 0)
         ),
-        1,
+        2,
         null,
         new THREE.Vector3(0, 0, -50),
         new THREE.Euler(0, -Math.PI, 0)

@@ -19,7 +19,7 @@ export class Model {
 
   declare _animationMixer: THREE.AnimationMixer;
   declare _animationActions: AnimationActions;
-  declare _animationCurrentStatus$: BehaviorSubject<AnimationNames>;
+  declare _currentAnimationName$: BehaviorSubject<AnimationNames>;
 
   declare _assetsManager: AssetsManager;
   declare _loader: DracoLoader;
@@ -72,14 +72,16 @@ export class Model {
     // Animation parameters
     this._animationActions = {
       none: null,
+      greet: null,
       idle: null,
       run: null,
+      talk: null,
       walkForward: null,
       walkBackward: null
     };
 
-    this._animationCurrentStatus$ = new BehaviorSubject<AnimationNames>(AnimationNames.none);
-    this._animationCurrentStatus$.pipe(map(() => this.playAnimation())).subscribe();
+    this._currentAnimationName$ = new BehaviorSubject<AnimationNames>(AnimationNames.none);
+    this._currentAnimationName$.pipe(map(() => this.playAnimation())).subscribe();
 
     this._assetsManager = new AssetsManager();
     this._loader = new DracoLoader();
@@ -154,6 +156,15 @@ export class Model {
 
     (this._checkpoint as Item).checkpointColliding = value;
     (this._checkpoint as Item).setBoxHelperColor();
+
+    // Set greet animation if model is interacting, idle otherwise
+    if (this._checkpointColliding && this._currentAnimationName$.value !== AnimationNames.talk) {
+      this._currentAnimationName$.value !== AnimationNames.greet &&
+        this._currentAnimationName$.next(AnimationNames.greet);
+    } else {
+      this._currentAnimationName$.value !== AnimationNames.idle &&
+        this._currentAnimationName$.next(AnimationNames.idle);
+    }
   }
 
   /**
@@ -188,7 +199,7 @@ export class Model {
     // Set animation tools
     this.setAnimationMixer(this._asset);
     this.setAnimationActions(assetObj._animations);
-    this._animationCurrentStatus$.next(AnimationNames.idle);
+    this._currentAnimationName$.next(AnimationNames.idle);
 
     this.setBoundingBox();
     this.setDebugHelperTools();
@@ -254,14 +265,31 @@ export class Model {
    * Set model animations
    */
   private setAnimationActions(animations: AnimationClips): void {
+    this._animationActions.greet =
+      animations.greet && this._animationMixer.clipAction(animations.greet as THREE.AnimationClip);
     this._animationActions.idle =
       animations.idle && this._animationMixer.clipAction(animations.idle as THREE.AnimationClip);
     this._animationActions.run =
       animations.run && this._animationMixer.clipAction(animations.run as THREE.AnimationClip);
+    this._animationActions.talk =
+      animations.talk && this._animationMixer.clipAction(animations.talk as THREE.AnimationClip);
     this._animationActions.walkForward =
       animations.walkForward && this._animationMixer.clipAction(animations.walkForward as THREE.AnimationClip);
     this._animationActions.walkBackward =
       animations.walkBackward && this._animationMixer.clipAction(animations.walkBackward as THREE.AnimationClip);
+  }
+
+  /**
+   * Set new current animation
+   * @param {AnimationNames} animationName animation name to set
+   */
+  public setCurrentAnimationName(animationName: AnimationNames): void {
+    // Do not set an animation if the same one is already on
+    if (this._currentAnimationName$.value === animationName) {
+      return;
+    }
+
+    this._currentAnimationName$.next(animationName);
   }
 
   /**
@@ -270,22 +298,30 @@ export class Model {
   public playAnimation(): void {
     // Stop current animation
     {
+      this._animationActions.greet?.stop();
       this._animationActions.idle?.stop();
       this._animationActions.run?.stop();
+      this._animationActions.talk?.stop();
       this._animationActions.walkBackward?.stop();
       this._animationActions.walkForward?.stop();
     }
 
     // Play new one
-    switch (this._animationCurrentStatus$.value) {
+    switch (this._currentAnimationName$.value) {
       case AnimationNames.none:
         this.playAnimationNone();
+        break;
+      case AnimationNames.greet:
+        this.playAnimationGreet();
         break;
       case AnimationNames.idle:
         this.playAnimationIdle();
         break;
       case AnimationNames.run:
         this.playAnimationRun();
+        break;
+      case AnimationNames.talk:
+        this.playAnimationTalk();
         break;
       case AnimationNames.walkBackward:
         this.playAnimationWalkBackward();
@@ -304,6 +340,13 @@ export class Model {
   private playAnimationNone(): void {}
 
   /**
+   * Manage model greet animation
+   */
+  private playAnimationGreet(): void {
+    this._animationActions.greet?.play();
+  }
+
+  /**
    * Manage model idle animation
    */
   private playAnimationIdle(): void {
@@ -315,6 +358,13 @@ export class Model {
    */
   private playAnimationRun(): void {
     this._animationActions.run?.play();
+  }
+
+  /**
+   * Manage model talk animation
+   */
+  private playAnimationTalk(): void {
+    this._animationActions.talk?.play();
   }
 
   /**
@@ -406,7 +456,7 @@ export class Model {
    * Dispose asset
    */
   public disposeAsset(): void {
-    this._animationCurrentStatus$.unsubscribe();
+    this._currentAnimationName$.unsubscribe();
 
     let assetsToDispose: Array<THREE.Object3D> = [];
     assetsToDispose.push(this._asset);

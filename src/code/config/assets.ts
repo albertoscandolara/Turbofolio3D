@@ -34,7 +34,8 @@ export const assets: Array<Asset> = [
   new Asset(
     3,
     'Checkpoint',
-    70,
+    10,
+    //70,
     'Checkpoint',
     new THREE.Vector3(0, 0, 0),
     new THREE.Euler(0, 0, 0),

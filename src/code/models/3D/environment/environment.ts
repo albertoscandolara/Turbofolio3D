@@ -11,6 +11,7 @@ import { BackgroundCubeTexture } from './backgrounds/background';
 import { BackgroundCubeTexturesManager } from '../../../app/managers/background-cube-textures';
 import { InteractLabel } from '../../../app/3D/interact-label/interact-label';
 import { Model } from './model';
+import { AnimationNames } from '~/models/animations.dto';
 
 export interface IEnvironment {}
 
