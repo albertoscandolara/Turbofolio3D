@@ -11,6 +11,7 @@ import { BackgroundCubeTexture } from './backgrounds/background';
 import { BackgroundCubeTexturesManager } from '../../../app/managers/background-cube-textures';
 import { InteractLabel } from '../../../app/3D/interact-label/interact-label';
 import { Model } from './model';
+import { AnimationNames } from '~/models/animations.dto';
 
 export interface IEnvironment {}
 
@@ -213,6 +214,8 @@ export class Environment implements IEnvironment {
    * Update all elements in the scene
    */
   public update(): void {
+    [...this._characters, ...this._buildings, ...this._items].forEach((model) => model.update());
+
     if (!this._mainCharacter) return;
 
     const interactingModels: Array<Model> = this._interactableModels.filter((model) => {

@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import { App } from '../app';
 import {
   assetLoadedEventEmitter,
+  changeEnvironmentEventEmitter,
   cubeTextureLoadedEventEmitter,
-  requestInteractionEventEmitter,
   resizeEventEmitter,
+  showInteractionTabEventEmitter,
   tickEventEmitter
 } from '../event-emitter/events';
 import { Logger } from '../logger';
@@ -108,7 +109,9 @@ export class App3D {
     tickEventEmitter.on(() => this.update());
     assetLoadedEventEmitter.on((assetId: number) => this.setModel(assetId));
     cubeTextureLoadedEventEmitter.on(() => this.setBackgroundCubeTexture());
-    requestInteractionEventEmitter.on((model: Model) => this._world.requestInteraction(model));
+
+    changeEnvironmentEventEmitter.on((environmentId: number) => this.changeEnvironment(environmentId));
+    showInteractionTabEventEmitter.on((model: Model) => this.setInteractionTab(model));
   }
 
   /**
@@ -142,5 +145,21 @@ export class App3D {
    */
   private setBackgroundCubeTexture() {
     this._world.setBackgroundCubeTexture();
+  }
+
+  /**
+   * Change world environment
+   * @param {number} environmentId environment id to set
+   */
+  public changeEnvironment(environmentId: number): void {
+    this._world.changeEnvironment(environmentId);
+  }
+
+  /**
+   * The user has interacted with a model that has to show a tab. Show it.
+   * @param {Model} model model interacting with the main character
+   */
+  public setInteractionTab(model: Model): void {
+    this._world.setInteractionTab(model);
   }
 }

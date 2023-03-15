@@ -1,7 +1,7 @@
 import './interact-label.scss';
 
 import { Logger } from '../../../app/logger';
-import { requestInteractionEventEmitter } from '../../../app/event-emitter/events';
+import { changeEnvironmentEventEmitter, showInteractionTabEventEmitter } from '../../../app/event-emitter/events';
 import { App3D } from '../app-3D';
 import { Language } from '../../language';
 import { Building } from '../../../models/3D/environment/buildings/building';
@@ -104,7 +104,7 @@ export class InteractLabel {
   /**
    * Hide label
    */
-  public hide() {
+  public hide(): void {
     this._model = null;
     this._label.removeEventListener('click', this.interact);
     this.visible = false;
@@ -113,7 +113,7 @@ export class InteractLabel {
   /**
    * Dispose label
    */
-  public dispose() {
+  public dispose(): void {
     this._label.remove();
   }
 
@@ -121,20 +121,26 @@ export class InteractLabel {
    * Returns label visibility
    * @returns boolean representing visibility
    */
-  public isVisible() {
+  public isVisible(): boolean {
     return this._visible;
   }
 
   /**
    * Callback function to invoke for model interaction
    */
-  public interact() {
+  public interact(): void {
     if (!this._model) {
       this._logger.warn(`${this.constructor.name} Requesting interaction, but model is not set. Do not emit`);
       return;
     }
 
     this.dispose();
-    requestInteractionEventEmitter.emit(this._model as Model);
+
+    if (this._model._goToEnvironment ?? false) {
+      const environmentId: number = this._model._goToEnvironment as number;
+      changeEnvironmentEventEmitter.emit(environmentId);
+    } else if (this._model._goToHTML ?? false) {
+      showInteractionTabEventEmitter.emit(this._model);
+    }
   }
 }

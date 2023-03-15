@@ -34,7 +34,8 @@ export const assets: Array<Asset> = [
   new Asset(
     3,
     'Checkpoint',
-    70,
+    10,
+    //70,
     'Checkpoint',
     new THREE.Vector3(0, 0, 0),
     new THREE.Euler(0, 0, 0),
@@ -52,5 +53,27 @@ export const assets: Array<Asset> = [
     `${charactersFolder}/robot_02/scene.gltf`,
     AssetType.DRACO,
     AssetCategory.Character
+  ),
+  new Asset(
+    5,
+    'Stegosaurus',
+    700,
+    'Stegosaurus',
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Euler(0, Math.PI / 2, 0),
+    `${itemsFolder}/stegosaurus/scene.gltf`,
+    AssetType.DRACO,
+    AssetCategory.Item
+  ),
+  new Asset(
+    6,
+    'Allosaurus',
+    700,
+    'Allosaurus',
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Euler(0, Math.PI / 2, 0),
+    `${itemsFolder}/allosaurus/scene.gltf`,
+    AssetType.DRACO,
+    AssetCategory.Item
   )
 ];
